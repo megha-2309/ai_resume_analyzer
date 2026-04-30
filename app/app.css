@@ -13,7 +13,7 @@ body {
 }
 
 main {
-  @apply min-h-screen pt-4 pb-20;
+  @apply min-h-screen pt-2 pb-10;
 }
 
 h1 {
@@ -66,11 +66,11 @@ form {
   }
 
   .main-section {
-    @apply w-full max-w-[1200px] mx-auto px-6 flex flex-col gap-12 relative z-10;
+    @apply w-full max-w-[1200px] mx-auto px-6 flex flex-col gap-8 relative z-10;
   }
 
   .page-heading {
-    @apply text-center flex flex-col items-center justify-center gap-6;
+    @apply text-center flex flex-col items-center justify-center gap-4;
   }
 
   .resumes-section {

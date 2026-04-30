@@ -62,7 +62,7 @@ export default function Home() {
     <Navbar />
 
     <section className="main-section">
-      <div className="page-heading py-20">
+      <div className="page-heading py-8">
         <h1>Track Your Applications & Resume Ratings</h1>
         {!loadingResumes && resumes?.length === 0 ? (
             <div className="flex flex-col items-center gap-8">
