@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /auth
+Disallow: /resume/*
+
+Sitemap: https://resumind.puter.site/sitemap.xml

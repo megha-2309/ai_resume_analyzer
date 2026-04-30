@@ -24,19 +24,24 @@ const Upload = () => {
         setStatusText('Processing document...');
         const uploadFilePromise = fs.upload([file]);
         const uploadImagePromise = convertPdfToImage(file).then(async (res) => {
+            if (res.error) throw new Error(res.error);
             if (!res.file) throw new Error('Failed to convert PDF to image');
             return fs.upload([res.file]);
         });
 
         let uploadedFile, uploadedImage;
         try {
-            [uploadedFile, uploadedImage] = await Promise.all([uploadFilePromise, uploadImagePromise]);
+            setStatusText('Uploading PDF...');
+            uploadedFile = await uploadFilePromise;
+            if (!uploadedFile) throw new Error('PDF upload failed');
+            
+            setStatusText('Converting and Uploading image...');
+            uploadedImage = await uploadImagePromise;
+            if (!uploadedImage) throw new Error('Image upload failed');
         } catch (err: any) {
-            return setStatusText(err.message || 'Error occurred during upload');
+            console.error("Upload error:", err);
+            return setStatusText(`Upload failed: ${err.message || err}`);
         }
-
-        if(!uploadedFile) return setStatusText('Error: Failed to upload file');
-        if(!uploadedImage) return setStatusText('Error: Failed to upload image');
 
         setStatusText('Preparing data...');
         const uuid = generateUUID();
@@ -47,27 +52,37 @@ const Upload = () => {
             companyName, jobTitle, jobDescription,
             feedback: '',
         }
-        await kv.set(`resume:${uuid}`, JSON.stringify(data));
+        
+        try {
+            await kv.set(`resume:${uuid}`, JSON.stringify(data));
+        } catch (err: any) {
+            console.error("KV error:", err);
+            return setStatusText(`Database error: ${err.message || err}`);
+        }
 
-        setStatusText('Analyzing...');
+        setStatusText('AI Analyzing (this may take a minute)...');
 
-        const feedback = await ai.feedback(
-            uploadedFile.path,
-            prepareInstructions({ jobTitle, jobDescription })
-        )
-        if (!feedback) return setStatusText('Error: Failed to analyze resume');
+        try {
+            const feedback = await ai.feedback(
+                uploadedFile.path,
+                prepareInstructions({ jobTitle, jobDescription })
+            )
+            if (!feedback) throw new Error('AI returned no response');
 
-        const feedbackText = typeof feedback.message.content === 'string'
-            ? feedback.message.content
-            : feedback.message.content[0].text;
+            const feedbackText = typeof feedback.message.content === 'string'
+                ? feedback.message.content
+                : (feedback.message.content as any)[0].text;
 
-        const cleanedText = feedbackText.replace(/```json/g, '').replace(/```/g, '').trim();
-
-        data.feedback = JSON.parse(cleanedText);
-        await kv.set(`resume:${uuid}`, JSON.stringify(data));
-        setStatusText('Analysis complete, redirecting...');
-        console.log(data);
-        navigate(`/resume/${uuid}`);
+            const cleanedText = feedbackText.replace(/```json/g, '').replace(/```/g, '').trim();
+            data.feedback = JSON.parse(cleanedText);
+            
+            await kv.set(`resume:${uuid}`, JSON.stringify(data));
+            setStatusText('Analysis complete, redirecting...');
+            navigate(`/resume/${uuid}`);
+        } catch (err: any) {
+            console.error("AI/Final KV error:", err);
+            return setStatusText(`Analysis failed: ${err.message || err}`);
+        }
     }
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -123,7 +138,7 @@ const Upload = () => {
                             </div>
 
                             <button className="primary-button mt-4 hover:scale-[1.02] hover:shadow-lg transition-all py-4 text-lg font-bold" type="submit">
-                                Analyze Resume
+                                Upload Resume
                             </button>
                         </form>
                     )}

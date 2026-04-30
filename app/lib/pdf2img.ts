@@ -13,13 +13,22 @@ async function loadPdfJs(): Promise<any> {
     if (loadPromise) return loadPromise;
 
     isLoading = true;
+    console.log("Loading pdfjs-dist...");
     // @ts-expect-error - pdfjs-dist/build/pdf.mjs is not a module
     loadPromise = import("pdfjs-dist/build/pdf.mjs").then((lib) => {
-        // Set the worker source to use local file
-        lib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+        // Use UNPKG CDN for the worker that matches the exact library version
+        const version = lib.version;
+        lib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${version}/build/pdf.worker.min.mjs`;
+            
+        console.log("pdfjs-dist loaded, worker source set to:", lib.GlobalWorkerOptions.workerSrc);
         pdfjsLib = lib;
         isLoading = false;
         return lib;
+    }).catch(err => {
+        console.error("Failed to load pdfjs-dist:", err);
+        isLoading = false;
+        loadPromise = null;
+        throw err;
     });
 
     return loadPromise;
@@ -32,7 +41,7 @@ export async function convertPdfToImage(
         const lib = await loadPdfJs();
 
         const arrayBuffer = await file.arrayBuffer();
-        const pdf = await lib.getDocument({ data: arrayBuffer }).promise;
+        const pdf = await lib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise;
         const page = await pdf.getPage(1);
 
         const viewport = page.getViewport({ scale: 1.5 });

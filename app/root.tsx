@@ -12,6 +12,13 @@ import "./app.css";
 import {usePuterStore} from "~/lib/puter";
 import {useEffect} from "react";
 
+export const meta: Route.MetaFunction = () => [
+  { title: "Resumind | AI Resume Analyzer" },
+  { name: "description", content: "Get smart feedback and ATS scores for your resume within seconds." },
+  { property: "og:title", content: "Resumind | AI Resume Analyzer" },
+  { property: "og:description", content: "Get smart feedback and ATS scores for your resume within seconds." },
+];
+
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {

@@ -52,7 +52,6 @@ const Resume = () => {
             } catch (error) {
                 console.error("Error loading resume files:", error);
             }
-            console.log({ feedback: data.feedback });
         }
 
         loadResume();

@@ -62,17 +62,23 @@ export default function Home() {
     <Navbar />
 
     <section className="main-section">
-      <div className="page-heading py-16">
+      <div className="page-heading py-20">
         <h1>Track Your Applications & Resume Ratings</h1>
         {!loadingResumes && resumes?.length === 0 ? (
-            <h2>No resumes found. Upload your first resume to get feedback.</h2>
+            <div className="flex flex-col items-center gap-8">
+                <h2>No resumes found. Upload your first resume to get feedback.</h2>
+                <Link to="/upload" className="primary-button w-fit text-xl font-semibold px-12 py-5 shadow-xl">
+                  Upload Resume
+                </Link>
+            </div>
         ): (
           <h2>Review your submissions and check AI-powered feedback.</h2>
         )}
       </div>
+
       {loadingResumes && (
           <div className="flex flex-col items-center justify-center">
-            <img src="/images/resume-scan-2.gif" className="w-[200px]" />
+            <img src="/images/resume-scan-2.gif" className="w-[200px]" alt="loading" />
           </div>
       )}
 
@@ -84,11 +90,11 @@ export default function Home() {
         </div>
       )}
 
-      {!loadingResumes && resumes?.length === 0 && (
-          <div className="flex flex-col items-center justify-center mt-10 gap-4">
-            <Link to="/upload" className="primary-button w-fit text-xl font-semibold px-8 py-4">
-              Upload Resume
-            </Link>
+      {!loadingResumes && resumes.length > 0 && (
+          <div className="flex justify-center mt-12">
+              <Link to="/upload" className="primary-button w-fit px-10">
+                  Upload Another Resume
+              </Link>
           </div>
       )}
     </section>
