@@ -350,7 +350,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
                     ],
                 },
             ],
-            { model: "claude-3-7-sonnet" }
+            { model: "gpt-4o-mini" }
         ) as Promise<AIResponse | undefined>;
     };
 
@@ -386,6 +386,12 @@ export const usePuterStore = create<PuterStore>((set, get) => {
         if (!puter) {
             setError("Puter.js not available");
             return;
+        }
+        // Handle Puter SDK's method name difference (del instead of delete)
+        // @ts-ignore
+        if (typeof puter.kv.del === 'function') {
+            // @ts-ignore
+            return puter.kv.del(key);
         }
         return puter.kv.delete(key);
     };

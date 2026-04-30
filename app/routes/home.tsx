@@ -13,7 +13,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const { auth, kv } = usePuterStore();
+  const { auth, kv, fs } = usePuterStore();
   const navigate = useNavigate();
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [loadingResumes, setLoadingResumes] = useState(false);
@@ -39,7 +39,26 @@ export default function Home() {
     loadResumes()
   }, []);
 
-  return <main className="bg-[url('/images/bg-main.svg')] bg-cover">
+  const handleDeleteResume = async (id: string) => {
+    try {
+      const resumeToDelete = resumes.find(r => r.id === id);
+      if (resumeToDelete) {
+        // Try to delete associated files; fail silently if they don't exist
+        try {
+            await fs.delete(resumeToDelete.resumePath);
+            await fs.delete(resumeToDelete.imagePath);
+        } catch (e) {}
+      }
+      
+      await kv.delete(`resume:${id}`);
+      setResumes(prev => prev.filter(r => r.id !== id));
+    } catch (err) {
+      console.error("Failed to delete resume:", err);
+      alert("Failed to delete resume. Please try again.");
+    }
+  };
+
+  return <main>
     <Navbar />
 
     <section className="main-section">
@@ -60,14 +79,14 @@ export default function Home() {
       {!loadingResumes && resumes.length > 0 && (
         <div className="resumes-section">
           {resumes.map((resume) => (
-              <ResumeCard key={resume.id} resume={resume} />
+              <ResumeCard key={resume.id} resume={resume} onDelete={handleDeleteResume} />
           ))}
         </div>
       )}
 
       {!loadingResumes && resumes?.length === 0 && (
           <div className="flex flex-col items-center justify-center mt-10 gap-4">
-            <Link to="/upload" className="primary-button w-fit text-xl font-semibold">
+            <Link to="/upload" className="primary-button w-fit text-xl font-semibold px-8 py-4">
               Upload Resume
             </Link>
           </div>

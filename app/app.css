@@ -1,48 +1,76 @@
-@import url("https://fonts.googleapis.com/css2?family=Mona+Sans:ital,wght@0,200..900;1,200..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @theme {
-  --font-sans: "Mona Sans", ui-sans-serif, system-ui, sans-serif,
-  "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --color-dark-200: #475467;
-  --color-light-blue-100: #c1d3f81a;
-  --color-light-blue-200: #a7bff14d;
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --color-dark-200: #1e293b;
+  --color-light-blue-100: #e0e7ff80;
+  --color-light-blue-200: #c7d2fe66;
 
-  --color-badge-green: #d5faf1;
-  --color-badge-red: #f9e3e2;
-  --color-badge-yellow: #fceed8;
+  --color-badge-green: #dcfce7;
+  --color-badge-red: #fee2e2;
+  --color-badge-yellow: #fef9c3;
 
-  --color-badge-green-text: #254d4a;
-  --color-badge-red-text: #752522;
-  --color-badge-yellow-text: #73321b;
+  --color-badge-green-text: #166534;
+  --color-badge-red-text: #991b1b;
+  --color-badge-yellow-text: #854d0e;
+}
+
+@utility text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500;
+}
+
+@utility bg-gradient {
+  background: linear-gradient(to bottom right, #f8fafc, #eff6ff);
+}
+
+@utility gradient-hover {
+  @apply bg-gradient-to-tr from-indigo-50 to-purple-50;
+}
+
+@utility primary-gradient {
+  background: linear-gradient(135deg, #4f46e5 0%, #7e22ce 100%);
+}
+
+@utility primary-gradient-hover {
+  background: linear-gradient(135deg, #4338ca 0%, #6b21a8 100%);
+}
+
+@utility inset-shadow {
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
 }
 
 html,
 body {
-  @apply bg-white;
+  @apply text-slate-900;
+  background: linear-gradient(135deg, #f3f4fa 0%, #ffffff 50%, #fdf4ff 100%);
+  min-height: 100vh;
 }
 
 main {
-  @apply min-h-screen pt-10;
+  @apply min-h-screen pt-4 pb-20;
 }
+
 h1 {
-  @apply text-6xl  text-gradient leading-tight tracking-[-2px] font-semibold;
+  @apply text-6xl text-gradient leading-tight tracking-tight font-extrabold;
 }
 
 h2 {
-  @apply text-3xl text-dark-200;
+  @apply text-2xl text-slate-600 font-medium;
 }
 
 label {
-  @apply text-dark-200;
+  @apply text-slate-700 font-semibold;
 }
+
 input {
-  @apply w-full p-4 inset-shadow rounded-2xl focus:outline-none bg-white;
+  @apply w-full p-4 rounded-2xl bg-white border border-slate-200 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm;
 }
 
 textarea {
-  @apply w-full p-4 inset-shadow rounded-2xl focus:outline-none bg-white;
+  @apply w-full p-4 rounded-2xl bg-white border border-slate-200 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all resize-none shadow-sm;
 }
 
 form {
@@ -50,103 +78,69 @@ form {
 }
 
 @layer components {
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#AB8C95] via-[#000000] to-[#8E97C5];
-  }
   .gradient-border {
-    @apply bg-gradient-to-b from-light-blue-100 to-light-blue-200 p-4 rounded-2xl;
+    @apply bg-white border border-slate-200 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all;
   }
   .primary-button {
-    @apply primary-gradient text-white rounded-full px-4 py-2 cursor-pointer w-full;
+    @apply primary-gradient text-white rounded-full px-8 py-4 font-bold text-lg hover:shadow-[0_8px_30px_rgb(99,102,241,0.4)] hover:-translate-y-0.5 transition-all w-full text-center flex items-center justify-center;
   }
   .resume-nav {
-    @apply flex flex-row justify-between items-center p-4 border-b border-gray-200;
+    @apply flex flex-row justify-between items-center p-6 border-b border-slate-200/60 bg-white/50 backdrop-blur-md sticky top-0 z-50;
   }
   .resume-summary {
     @apply flex flex-row items-center justify-center p-4 gap-4;
-    .category {
-      @apply flex flex-row gap-2 items-center bg-gray-50 rounded-2xl p-4 w-full justify-between;
-    }
+  }
+  .resume-summary .category {
+    @apply flex flex-row gap-2 items-center bg-white border border-slate-100 shadow-sm rounded-2xl p-4 w-full justify-between hover:shadow-md transition-shadow;
   }
   .back-button {
-    @apply flex flex-row items-center gap-2 border border-gray-200 rounded-lg p-2 shadow-sm;
+    @apply flex flex-row items-center gap-2 border border-slate-200 bg-white hover:bg-slate-50 transition-colors rounded-xl px-4 py-2 shadow-sm;
   }
   .auth-button {
-    @apply primary-gradient rounded-full py-4 px-8 cursor-pointer w-[600px] max-md:w-full text-3xl font-semibold text-white;
+    @apply primary-gradient rounded-full py-4 px-8 cursor-pointer w-[600px] max-md:w-full text-3xl font-bold text-white shadow-xl hover:shadow-[0_10px_40px_rgb(99,102,241,0.5)] hover:-translate-y-1 transition-all;
   }
   .main-section {
-    @apply flex flex-col items-center gap-8 pt-12 mx-15 pb-5;
+    @apply flex flex-col items-center gap-10 pt-16 px-4 md:px-12 pb-24 w-full max-w-[1600px] mx-auto;
   }
   .page-heading {
-    @apply flex flex-col items-center gap-8 max-w-4xl text-center;
+    @apply flex flex-col items-center gap-6 max-w-4xl text-center;
   }
   .resumes-section {
-    @apply flex flex-wrap max-lg:flex-col gap-6 items-start  w-full max-w-[1850px] justify-evenly;
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-10 w-full px-4;
   }
-
   .resume-card {
-    @apply flex flex-col gap-8 h-[560px] w-full lg:w-[450px] xl:w-[490px] bg-white rounded-2xl p-4;
+    @apply flex flex-col gap-6 h-[540px] w-full bg-white rounded-[2rem] p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-all hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] relative overflow-hidden;
   }
-
   .resume-card-header {
-    @apply flex flex-row gap-2 justify-between min-h-[110px] max-sm:flex-col items-center max-md:justify-center max-md:items-center;
+    @apply flex flex-row gap-2 justify-between items-start;
   }
-
   .feedback-section {
     @apply flex flex-col gap-8 w-1/2 px-8 max-lg:w-full py-6;
   }
-
   .navbar {
-    @apply flex flex-row justify-between items-center bg-white rounded-full p-4 w-full px-10 max-w-[1200px] mx-auto;
+    @apply flex flex-row justify-between items-center bg-white/80 backdrop-blur-xl border border-slate-200/50 rounded-full p-4 w-full px-10 max-w-[1200px] mx-auto shadow-sm sticky top-4 z-50;
   }
-
   .score-badge {
-    @apply flex flex-row items-center justify-center py-1 px-2 gap-4 rounded-[96px];
+    @apply flex flex-row items-center justify-center py-1 px-3 gap-2 rounded-full font-bold text-sm tracking-wide;
   }
-
   .form-div {
     @apply flex flex-col gap-2 w-full items-start;
   }
-
   .uplader-drag-area {
-    @apply relative p-8 text-center transition-all duration-700 cursor-pointer bg-white rounded-2xl min-h-[208px];
+    @apply relative p-8 text-center transition-all duration-500 cursor-pointer bg-white border-2 border-dashed border-slate-300 rounded-2xl min-h-[208px] hover:border-indigo-400 hover:bg-indigo-50/30;
   }
   .uploader-selected-file {
-    @apply flex items-center justify-between p-3 bg-gray-50 rounded-2xl;
+    @apply flex items-center justify-between p-4 bg-white border border-slate-200 shadow-sm rounded-2xl;
   }
-}
-
-@utility bg-gradient {
-  background: linear-gradient(to bottom, #f0f4ff 60%, #fa7185cc);
-}
-
-@utility text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#AB8C95] via-[#000000] to-[#8E97C5];
-}
-
-@utility gradient-hover {
-  @apply bg-gradient-to-b from-light-blue-100 to-light-blue-200;
-}
-
-@utility primary-gradient {
-  background: linear-gradient(to bottom, #8e98ff, #606beb);
-  box-shadow: 0px 74px 21px 0px #6678ef00;
-}
-
-@utility primary-gradient-hover {
-  background: linear-gradient(to bottom, #717dff, #4957eb);
-}
-
-@utility inset-shadow {
-  box-shadow: inset 0 0 12px 0 rgba(36, 99, 235, 0.2);
-  backdrop-filter: blur(10px);
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }

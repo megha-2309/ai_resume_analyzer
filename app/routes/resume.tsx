@@ -29,21 +29,30 @@ const Resume = () => {
             if(!resume) return;
 
             const data = JSON.parse(resume);
+            
+            // Show scanning animation for 3 seconds before displaying feedback
+            setTimeout(() => {
+                setFeedback(data.feedback);
+            }, 3000);
 
-            const resumeBlob = await fs.read(data.resumePath);
-            if(!resumeBlob) return;
+            try {
+                const [resumeBlob, imageBlob] = await Promise.all([
+                    fs.read(data.resumePath).catch(() => null),
+                    fs.read(data.imagePath).catch(() => null)
+                ]);
 
-            const pdfBlob = new Blob([resumeBlob], { type: 'application/pdf' });
-            const resumeUrl = URL.createObjectURL(pdfBlob);
-            setResumeUrl(resumeUrl);
+                if(resumeBlob) {
+                    const pdfBlob = new Blob([resumeBlob], { type: 'application/pdf' });
+                    setResumeUrl(URL.createObjectURL(pdfBlob));
+                }
 
-            const imageBlob = await fs.read(data.imagePath);
-            if(!imageBlob) return;
-            const imageUrl = URL.createObjectURL(imageBlob);
-            setImageUrl(imageUrl);
-
-            setFeedback(data.feedback);
-            console.log({resumeUrl, imageUrl, feedback: data.feedback });
+                if(imageBlob) {
+                    setImageUrl(URL.createObjectURL(imageBlob));
+                }
+            } catch (error) {
+                console.error("Error loading resume files:", error);
+            }
+            console.log({ feedback: data.feedback });
         }
 
         loadResume();
@@ -58,7 +67,7 @@ const Resume = () => {
                 </Link>
             </nav>
             <div className="flex flex-row w-full max-lg:flex-col-reverse">
-                <section className="feedback-section bg-[url('/images/bg-small.svg') bg-cover h-[100vh] sticky top-0 items-center justify-center">
+                <section className="feedback-section h-[100vh] sticky top-0 items-center justify-center border-r border-slate-200/50 bg-slate-50/50">
                     {imageUrl && resumeUrl && (
                         <div className="animate-in fade-in duration-1000 gradient-border max-sm:m-0 h-[90%] max-wxl:h-fit w-fit">
                             <a href={resumeUrl} target="_blank" rel="noopener noreferrer">
