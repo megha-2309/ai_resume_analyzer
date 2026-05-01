@@ -1,4 +1,4 @@
-import {type FormEvent, useState} from 'react'
+import {type FormEvent, useState, useEffect} from 'react'
 import Navbar from "~/components/Navbar";
 import FileUploader from "~/components/FileUploader";
 import {usePuterStore} from "~/lib/puter";
@@ -17,6 +17,14 @@ const Upload = () => {
     const handleFileSelect = (file: File | null) => {
         setFile(file)
     }
+
+    // Protect this route: redirect to auth if not logged in
+    useEffect(() => {
+        // Only redirect if Puter is ready and we KNOW they are not authenticated
+        if(!auth.isAuthenticated) {
+            navigate('/auth?next=/upload');
+        }
+    }, [auth.isAuthenticated, navigate]);
 
     const handleAnalyze = async ({ companyName, jobTitle, jobDescription, file }: { companyName: string, jobTitle: string, jobDescription: string, file: File  }) => {
         setIsProcessing(true);
@@ -95,7 +103,10 @@ const Upload = () => {
         const jobTitle = formData.get('job-title') as string;
         const jobDescription = formData.get('job-description') as string;
 
-        if(!file) return;
+        if(!file) {
+            alert("Aapne PDF file select nahi ki hai! Please pehle apna resume attach karein.");
+            return;
+        }
 
         handleAnalyze({ companyName, jobTitle, jobDescription, file });
     }
